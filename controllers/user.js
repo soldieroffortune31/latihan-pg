@@ -47,16 +47,37 @@ module.exports = {
             }
         }
     },
-
-    tesString : async (req, res) => {
-        let nama = cryptojs.SHA1(req.body.nama);
-        let sha256 = cryptojs.HmacSHA256('4dmin'+'&', nama.toString())
-        let hash = sha256.toString(cryptojs.enc.Base64);
-        // let nama = cryptojs.SHA256(req.body.nama);
-        // let hash = nama.toString(cryptojs.enc.Base64);
-        var words = cryptojs.enc.Base64.parse("SGVsbG8sIFdvcmxkIQ==");
-        var txt = cryptojs.enc.Utf8.stringify(words)
-        console.log(words);
-        res.status(200).json({hash : hash});
+    getUsers : async (req, res) => {
+        try {
+            const find = await pool.query('select * from users')
+            res.status(200).json({message: 'berhasil', code:200, data: find.rows});
+        } catch (error) {
+            res.status(400).json({message: 'error', code:400})
+        }
+    },
+    getUserByID : async (req, res) => {
+        const id = req.params.id;
+        try {
+            const find = await pool.query('select * from users where id=$1',[id]);
+            if(find){
+                res.status(200).json({message: 'berhasil', code:200, data: find.rows[0]})
+            }else{
+                res.status(400).json({message: 'data tidak ditemukan', code:400})
+            }
+        } catch (error) {
+            res.status(400).json({message: 'error', code:400})
+        }
     }
+
+    // tesString : async (req, res) => {
+    //     let nama = cryptojs.SHA1(req.body.nama);
+    //     let sha256 = cryptojs.HmacSHA256('4dmin'+'&', nama.toString())
+    //     let hash = sha256.toString(cryptojs.enc.Base64);
+    //     // let nama = cryptojs.SHA256(req.body.nama);
+    //     // let hash = nama.toString(cryptojs.enc.Base64);
+    //     var words = cryptojs.enc.Base64.parse("SGVsbG8sIFdvcmxkIQ==");
+    //     var txt = cryptojs.enc.Utf8.stringify(words)
+    //     console.log(words);
+    //     res.status(200).json({hash : hash});
+    // }
 }
