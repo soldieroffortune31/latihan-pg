@@ -3,9 +3,14 @@ const app = express();
 const port = 3000;
 var user = require('./controllers/user');
 var pesantren = require('./controllers/latihanAxios');
+var token = require('./controllers/token')
 
 app.use(express.json());
 app.use(express.urlencoded({extended : false}));
+
+app.post('/token', token.getToken);
+app.get('/check', token.check);
+app.get('/verify', token.enkripsiConsId);
 
 app.post('/user', user.createUser);
 app.delete('/user/:id', user.deleteUser);

@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const cryptojs = require('crypto-js');
+const jwt = require('jsonwebtoken');
 // const db = require('../konektor');
 const pool = new Pool({
     host: 'localhost',
@@ -49,10 +50,13 @@ module.exports = {
     },
     getUsers : async (req, res) => {
         try {
+
+            var decoded = jwt.verify(req.headers.token, 'ini rahasia')
+
             const find = await pool.query('select * from users')
             res.status(200).json({message: 'berhasil', code:200, data: find.rows});
         } catch (error) {
-            res.status(400).json({message: 'error', code:400})
+            res.status(400).json({message: 'error', code:400, error:error})
         }
     },
     getUserByID : async (req, res) => {
